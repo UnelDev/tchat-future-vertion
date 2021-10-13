@@ -49,7 +49,8 @@ void userinterface::changestateconnectbuton(bool state){
 void userinterface::addItemOfClientList(QString item){
     ui->clientlist->addItem(item);
 }
-void remouveItemsOfClientList(QString item){
+int userinterface::remouveItemsOfClientList(QString item, int nbClient){
+    int nbOfRemouve{nbClient};
     if(ui->clientlist->findItems(item,Qt::MatchCaseSensitive).size()==1){
         ui->clientlist->removeItemWidget(ui->clientlist->findItems(item,Qt::MatchCaseSensitive)[1]); //on suprime le nom specifier
         QMessageBox::critical(this, tr("supression de client"), tr("le client vien d'etre suprimer"));
@@ -58,9 +59,10 @@ void remouveItemsOfClientList(QString item){
         {
             ui->clientlist->removeItemWidget(ui->clientlist->findItems(item,Qt::MatchCaseSensitive)[1]); //on suprime le nom specifier
             QMessageBox::critical(this, tr("supression de client"), tr("le client vien d'etre suprimer"));
-            --nbuser;
+            --nbOfRemouve;
         }
     }
+    return nbOfRemouve;
 }
 QString userinterface::returnpsedo(){
     return ui->pseudo->text();

@@ -23,7 +23,7 @@ public:
     void displayconnectlabel(QString label);
     void changestateconnectbuton(bool state);
     void addItemOfClientList(QString item);
-    void remouveItemsOfClientList(QString item);
+    int remouveItemsOfClientList(QString item, int nbClient);
     QString returnpsedo();
 
 private slots:

@@ -3,6 +3,38 @@
 userinterface *ui;
 clients::clients()
 {
+    settings = new QSettings("ananta system","tchat",this);
+    if(!settings->contains("succes/succes")){
+        settings->setValue("succes/succes",true);
+    }if(!settings->contains("succes/nbmessage")){
+        settings->setValue("succes/nbmessage",0);
+    }if(!settings->contains("settings/SaveMessage")){
+        settings->setValue("settings/SaveMessage",true);
+    }if(!settings->contains("settings/visualNotification")){
+        settings->setValue("settings/visualNotification",true);
+    }if(!settings->contains("settings/SoundNotification")){
+        settings->setValue("settings/SoundNotification",true);
+    }if(!settings->contains("settings/transparencyIsActived")){
+        settings->setValue("settings/transparencyIsActived", false);
+    }if(!settings->contains("settings/color")){
+        settings->setValue("settings/color","white");
+    }if(!settings->contains("settings/path")){
+        settings->setValue("settings/path",":/sound/notifdefault.wav");
+    }if(!settings->contains("settings/transparency")){
+        settings->setValue("settings/transparency","0.5");
+    }if(!settings->contains("succes/10userSimultaneously")){
+        settings->setValue("succes/10userSimultaneously", false);
+    }if(!settings->contains("succes/30userSimultaneously")){
+        settings->setValue("succes/30userSimultaneously", false);
+    }if(!settings->contains("succes/100userSimultaneously")){
+        settings->setValue("succes/100userSimultaneously", false);
+    }if(!settings->contains("succes/server/nbserveur")){
+        settings->setValue("succes/server/nbserveur", 0);
+    }if(!settings->contains("succes/server/nbserveur")){
+        settings->setValue("succes/server/nbserveur", 0);
+    }
+    version="5.0";
+    nbuser=0;
     socket = new QTcpSocket; //serveur
     connect(socket, &QTcpSocket::readyRead, this ,&clients::datareceived);
     connect(socket, &QTcpSocket::connected,this,&clients::connected);
@@ -83,7 +115,7 @@ void clients::processthemessage(QMap<QString,QString> message)
     }else if(message["type"]=="msg"){
         ui->displayMessagelist(generatemesage(message));
     }else if(message["type"]=="connection"){
-        ui->clientlist->addItem(message["psedo"]);
+        ui->addItemOfClientList(message["psedo"]);
         ++nbuser;
         if(nbuser==10){
             settings->setValue("succes/10userSimultaneously", true);
@@ -99,7 +131,7 @@ void clients::processthemessage(QMap<QString,QString> message)
 void clients::processcomand(QMap<QString, QString> commend)
 {
     if (commend["message"] == "psedo?"){
-        client_sentcommende("psedo_", ui->returnpsedo());
+        sentcommende("psedo_", ui->returnpsedo());
     }else if (commend["message"]=="vertion?"){
         client_sentcommende("version",version);
     }else if (commend["message"]=="pesdoAnonimousinvalid"){
@@ -114,17 +146,7 @@ void clients::processcomand(QMap<QString, QString> commend)
         ui->addItemOfClientList(commend["arg"]);
         ++nbuser;
     }else if(commend["message"]=="desconnected"){
-        if(ui->clientlist->findItems(commend["arg"],Qt::MatchCaseSensitive).size()==1){
-            ui->clientlist->removeItemWidget(ui->clientlist->findItems(commend["arg"],Qt::MatchCaseSensitive)[1]); //on suprime le nom specifier
-            QMessageBox::critical(this, tr("supression de client"), tr("le client vien d'etre suprimer"));
-        }else{
-            for (int compteur {ui->clientlist->findItems(commend["arg"],Qt::MatchCaseSensitive).size()-1}; compteur > 0; --compteur) //tan que des utilistateur porte le nom specifier
-            {
-                ui->clientlist->removeItemWidget(ui->clientlist->findItems(commend["arg"],Qt::MatchCaseSensitive)[1]); //on suprime le nom specifier
-                QMessageBox::critical(this, tr("supression de client"), tr("le client vien d'etre suprimer"));
-                --nbuser;
-            }
-        }
+        ui->remouveItemsOfClientList(commend["arg"],nbuser);
     }else{
         QMessageBox::critical(this, tr("erreur"), tr("un packet de comande a été recu mais la comande est incomprise."));
     }

@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QWidget>
 #include <QDateTime>
+#include <QSettings>
 class clients : public QWidget
 {
     Q_OBJECT
@@ -17,13 +18,15 @@ public:
     QString generatemesage(QString message, QString psedo);
     QString generatedate();
 private:
+    QSettings* settings;
     QTcpSocket *socket;
     quint16 messagesize;
-
+    QString version;
     //interne
     void processthemessage(QMap<QString,QString> message);
     void processcomand(QMap<QString, QString> commend);
     QString generatemesage(QMap<QString, QString> message);
+    int nbuser;
 };
 
 #endif // CLIENTS_H
