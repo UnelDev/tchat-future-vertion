@@ -80,6 +80,13 @@ void clients::conect(){
     ui->startTrayIcon();
     QMessageBox::critical(nullptr,tr("psedo invalid"),tr("vous ne pouvez avoir anonymous ou aucun psedo"));
 }
+void clients::desconnect()
+{
+    QString textmessage = generatemesage(tr("déconecter du serveur"),tr("chat bot"));
+    ui->displayconnectlabel(tr("<font color=\"#ff0000\">Déconnecté</font>"));
+    ui->displayMessagelist(textmessage);
+   ui->changestateconnectbuton(true);
+}
 void clients::connectto(QString ip, int port)
 {
     ui->displayMessagelist(generatemesage(tr("tentative de connexion en cour"),tr("chat bot")));

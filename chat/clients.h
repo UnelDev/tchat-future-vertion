@@ -13,6 +13,7 @@ public:
     clients();
     ~clients();
     void conect();
+    void desconnect();
     void connectto(QString ip, int port);
     void connected();
     void datareceived();
