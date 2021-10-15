@@ -276,3 +276,106 @@ QString clients::generatemesage(QString message, QString psedo)
     }
     return(tr("<span style=\"font-size: 12px; font-weight: bold;\">")+psedo+tr("</span>")+generatedate()+tr("<span style=\"font-size: 14px; \">")+message+tr("</span><br/><br/>"));
 }
+
+
+
+//ilisible
+void clients::socketerror(QAbstractSocket::SocketError erreur)
+{
+    ui->displayconnectlabel(tr("<font color=\"#ff0000\">Déconnecté</font>"));
+    switch(erreur) // On affiche un message diff?rent selon l'erreur qu'on nous indique
+    {
+        case QAbstractSocket::HostNotFoundError:
+            ui->displayMessagelist(generatemesage(QObject::tr("ERREUR : le serveur primaire n'a pas pu étre trouvé. Vérifiez le nom du serveur et le mot de passe."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::ConnectionRefusedError:
+            ui->displayMessagelist(generatemesage(QObject::tr("ERREUR : le serveur primaire a refusé la connexion. Vérifiez si le programme \"serveur\" a bien été lancé. Vérifiez aussi l'IP et le port."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::RemoteHostClosedError:
+            ui->displayMessagelist(generatemesage(QObject::tr("ERREUR : le serveur primaire a coupé la connexion."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::SocketAccessError:
+            ui->displayMessagelist(generatemesage(QObject::tr("L'opération a échoué car l'application ne dispose pas des privilèges requis."),tr("chat bot")));
+           ui->changestateconnectbuton(true);
+        break;
+        case QAbstractSocket::SocketResourceError:
+            ui->displayMessagelist(generatemesage(QObject::tr("Le système local a manqué de ressources (par exemple, trop de sockets)."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::SocketTimeoutError:
+            ui->displayMessagelist(generatemesage(QObject::tr("loperation a expirée"),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::DatagramTooLargeError:
+            ui->displayMessagelist(generatemesage(QObject::tr("Le datagramme était plus grand que la limite du système d'exploitation (qui peut être aussi basse que 8192 octets)"),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+        case QAbstractSocket::NetworkError:
+            ui->displayMessagelist(generatemesage(QObject::tr("Une erreur s'est produite avec le réseau (par exemple, le câble réseau a été \"accidentellement\" débranché)."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::UnsupportedSocketOperationError:
+            ui->displayMessagelist(generatemesage(QObject::tr("L'opération de socket demandée n'est pas prise en charge par le système d'exploitation local (par exemple, absence de prise en charge d'IPv6)."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::ProxyAuthenticationRequiredError:
+            ui->displayMessagelist(generatemesage(QObject::tr(" le proxy requiert une authentification."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::ProxyConnectionRefusedError:
+            ui->displayMessagelist(generatemesage(QObject::tr("Impossible de contacter le serveur proxy car la connexion à ce serveur a été refusée"),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::ProxyConnectionClosedError:
+            ui->displayMessagelist(generatemesage(QObject::tr("La connexion au serveur proxy a été fermée de manière inattendue (avant que la connexion au pair final ne soit établie)"),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::ProxyConnectionTimeoutError:
+            ui->displayMessagelist(generatemesage(QObject::tr("La connexion au serveur proxy a expiré ou le serveur proxy a cessé de répondre lors de la phase d'authentification."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::ProxyNotFoundError:
+            ui->displayMessagelist(generatemesage(QObject::tr("le proxi est inrouvable"),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::ProxyProtocolError:
+            displayMessagelist(generatemesage(QObject::tr("La négociation de connexion avec le serveur proxy a échoué, car la réponse du serveur proxy n'a pas pu être comprise."),tr("chat bot")));
+            changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::OperationError:
+            ui->displayMessagelist(generatemesage(QObject::tr("Une opération a été tentée alors que le socket était dans un état qui ne l'autorisait pas."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::TemporaryError:
+            ui->displayMessagelist(generatemesage(QObject::tr("Une erreur temporaire s'est produite (par exemple, l'opération bloquerait et le socket n'est pas bloquant)."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+        case QAbstractSocket::UnknownSocketError:
+            ui->displayMessagelist(generatemesage(QObject::tr("Une erreur non identifiée s'est produite."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+
+    default:
+            ui->displayMessagelist(generatemesage(QObject::tr("ERREUR : ") + socket->errorString(),tr("chat bot")));
+            ui->changestateconnectbuton(true);
+        break;
+    }
+}
