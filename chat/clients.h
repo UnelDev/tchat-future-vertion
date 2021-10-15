@@ -27,6 +27,7 @@ public:
 
     QString generatemesage(QString message, QString psedo);
     QString generatedate();
+    QString generatedate(QMap<QString, QString> date);
 private:
     QSettings* settings;
     QTcpSocket *socket;
