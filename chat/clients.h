@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QDateTime>
 #include <QSettings>
+#include <QNetworkInterface>
 class clients : public QWidget
 {
     Q_OBJECT
@@ -13,7 +14,15 @@ public:
     ~clients();
     void conect();
     void connectto(QString ip, int port);
+    void connected();
     void datareceived();
+
+    void sentdatamap(const QMap<QString,QString> sendmap);
+    void sentdatamap(const QString type, QString message, QString psedo, QDateTime seconde, QDateTime minute, QDateTime heurs, QDateTime NoJour, QDate jour);
+    void sentdatamap(const QString type, QString message, QString pseudo);
+    void sentdatamap(const QString type, QString message);
+    void sentcommende(const QString commende);
+    void sentcommende(const QString commende, QString arg);
 
     QString generatemesage(QString message, QString psedo);
     QString generatedate();

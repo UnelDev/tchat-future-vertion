@@ -24,6 +24,7 @@ public:
     void changestateconnectbuton(bool state);
     void addItemOfClientList(QString item);
     int remouveItemsOfClientList(QString item, int nbClient);
+    int valueOFServeurPort();
     QString returnpsedo();
 
 private slots:

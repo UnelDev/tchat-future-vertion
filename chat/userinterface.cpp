@@ -67,5 +67,8 @@ int userinterface::remouveItemsOfClientList(QString item, int nbClient){
 QString userinterface::returnpsedo(){
     return ui->pseudo->text();
 }
+int userinterface::valueOFServeurPort(){
+    return ui->serveurport->value();
+}
 
 

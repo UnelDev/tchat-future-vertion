@@ -42,7 +42,7 @@ clients::clients()
     connect(socket, &QTcpSocket::errorOccurred, this, &clients::socketerror);
     messagesize = 0;
     //conexion
-    client_connectto("127.0.0.1", ui->serveurport->value());
+    connectto("127.0.0.1", ui->valueOFServeurPort());
 }
 clients::~clients(){
     delete socket;
@@ -88,12 +88,24 @@ void clients::connectto(QString ip, int port)
     socket->connectToHost(ip, port);
     ui->displayconnectlabel(tr("<font color=\"#894B23\">tenetative lancé</font>"));
 }
-QString clients::generatemesage(QString message, QString psedo)
+void clients::connected()
 {
-    if(psedo == "" ||psedo == " "){
-        psedo = "anonymous";
+    QString textmessage = generatemesage(tr("conexion reusi"), tr("chat bot"));
+    sentdatamap("connection","Serveur Tchat Bot");
+    ui->displayMessagelist(textmessage);
+    ui->changestateconnectbuton(true);
+    ui->displayconnectlabel(tr("<font color=\"#70AD47\">connecté</font>"));
+    for (int compteur {settings->value("succes/server/nbserveur").toInt()}; compteur > 0; --compteur)
+    {
+        if(socket->peerAddress().Any==settings->value("succes/server/"+QString::number(settings->value("succes/server/nbserveur").toInt()))){
+            return;
+        }
     }
-    return(tr("<span style=\"font-size: 12px; font-weight: bold;\">")+psedo+tr("</span>")+generatedate()+tr("<span style=\"font-size: 14px; \">")+message+tr("</span><br/><br/>"));
+    settings->setValue("succes/server/"+QString::number(settings->value("succes/server/nbserveur").toInt()),socket->peerAddress().Any);
+    settings->setValue("succes/server/nbserveur", settings->value("succes/server/nbserveur").toInt()+1);
+    if(settings->value("succes/server/nbserveur").toInt()==20){
+        settings->setValue("succes/20server", true);
+    }
 }
 QString clients::generatedate()
 {
@@ -108,6 +120,94 @@ QString clients::generatedate()
 
 
 //fonction interne
+
+void clients::sentdatamap(const QMap<QString,QString> sendmap)
+{
+    QByteArray paquet;
+    QDataStream out(&paquet, QIODevice::WriteOnly);
+
+    out << (quint16) 0;
+    out << sendmap;
+    out.device()->seek(0);
+    out << (quint16) (paquet.size() - sizeof(quint16));
+    socket->write(paquet); // On envoie le paquet
+}
+void clients::sentdatamap(const QString type, QString message, QString pseudo, QDateTime seconde, QDateTime minute, QDateTime heures, QDateTime NoJour, QDate jour){
+    QMap<QString,QString> sendmap;
+    sendmap["type"]=type;
+    sendmap["message"]=message;
+    sendmap["pseudo"]=pseudo;
+    sendmap["version"]=version;
+    sendmap["secondofsending"]=seconde.toString();
+    sendmap["minuteofsending"]=minute.toString();
+    sendmap["sendingtime"]=heures.toString();
+    sendmap["sendingdate"]=NoJour.toString();
+    sendmap["shippingday"]=jour.toString();
+    sentdatamap(sendmap);
+}
+void clients::sentdatamap(const QString type, QString message, QString pseudo){
+    QMap<QString,QString> sendmap;
+    sendmap["type"]=type;
+    sendmap["message"]=message;
+    sendmap["pseudo"]=pseudo;
+    sendmap["version"]=version;
+    sendmap["secondofsending"]=QDateTime::currentDateTime().toString("ss");;
+    sendmap["minuteofsending"]=QDateTime::currentDateTime().toString("mm");;
+    sendmap["sendingtime"]=QDateTime::currentDateTime().toString("hh");
+    sendmap["sendingdate"]=QDateTime::currentDateTime().toString("d");
+    sendmap["shippingday"]=QDateTime::currentDateTime().toString("dddd");
+    sendmap["shippingmonth"]=QDateTime::currentDateTime().toString("MMMM");
+    sendmap["shippingyears"]=QDateTime::currentDateTime().toString("yyyy");
+    sentdatamap(sendmap);
+}
+void clients::sentdatamap(const QString type, QString message){
+    QMap<QString,QString> sendmap;
+    sendmap["type"]=type;
+    sendmap["message"]=message;
+    sendmap["pseudo"]=ui->returnpsedo();
+    sendmap["version"]=version;
+    sendmap["secondofsending"]=QDateTime::currentDateTime().toString("ss");;
+    sendmap["minuteofsending"]=QDateTime::currentDateTime().toString("mm");;
+    sendmap["sendingtime"]=QDateTime::currentDateTime().toString("hh");
+    sendmap["sendingdate"]=QDateTime::currentDateTime().toString("d");
+    sendmap["shippingday"]=QDateTime::currentDateTime().toString("dddd");
+    sendmap["shippingmonth"]=QDateTime::currentDateTime().toString("MMMM");
+    sendmap["shippingyears"]=QDateTime::currentDateTime().toString("yyyy");
+    sentdatamap(sendmap);
+}
+void clients::sentcommende(const QString commande){
+    QMap<QString,QString> sendmap;
+    sendmap["type"]="cmd";
+    sendmap["message"]=commande;
+    sendmap["pseudo"]=ui->returnpsedo();
+    sendmap["version"]=version;
+    sendmap["secondofsending"]=QDateTime::currentDateTime().toString("ss");;
+    sendmap["minuteofsending"]=QDateTime::currentDateTime().toString("mm");;
+    sendmap["sendingtime"]=QDateTime::currentDateTime().toString("hh");
+    sendmap["sendingdate"]=QDateTime::currentDateTime().toString("d");
+    sendmap["shippingday"]=QDateTime::currentDateTime().toString("dddd");
+    sendmap["shippingmonth"]=QDateTime::currentDateTime().toString("MMMM");
+    sendmap["shippingyears"]=QDateTime::currentDateTime().toString("yyyy");
+    sentdatamap(sendmap);
+}
+void clients::sentcommende(const QString commande, QString arg){
+    QMap<QString,QString> sendmap;
+    sendmap["type"]="cmd";
+    sendmap["message"]=commande;
+    sendmap["arg"]=arg;
+    sendmap["pseudo"]=ui->returnpsedo();
+    sendmap["version"]=version;
+    sendmap["secondofsending"]=QDateTime::currentDateTime().toString("ss");;
+    sendmap["minuteofsending"]=QDateTime::currentDateTime().toString("m");;
+    sendmap["sendingtime"]=QDateTime::currentDateTime().toString("hh");
+    sendmap["sendingdate"]=QDateTime::currentDateTime().toString("d");
+    sendmap["shippingday"]=QDateTime::currentDateTime().toString("ddd");
+    sendmap["shippingmonth"]=QDateTime::currentDateTime().toString("MMMM");
+    sendmap["shippingyears"]=QDateTime::currentDateTime().toString("yyyy");;
+    sentdatamap(sendmap);
+}
+
+//fonctioninterne derivée
 void clients::processthemessage(QMap<QString,QString> message)
 {
     if(message["type"]=="cmd"){
@@ -133,7 +233,7 @@ void clients::processcomand(QMap<QString, QString> commend)
     if (commend["message"] == "psedo?"){
         sentcommende("psedo_", ui->returnpsedo());
     }else if (commend["message"]=="vertion?"){
-        client_sentcommende("version",version);
+        sentcommende("version",version);
     }else if (commend["message"]=="pesdoAnonimousinvalid"){
         QMessageBox::critical(this, tr("erreur"), tr("il faut un autre psedo que anonimous ou rien pour se conecter"));
     }else if(commend["message"]=="psedoalreadyuse"){
@@ -156,4 +256,11 @@ QString clients::generatemesage(QMap<QString, QString> message){
         message["psedo"] = "anonymous";
     }
     return(tr("<span style=\"font-size: 12px; font-weight: bold;\">")+message["psedo"]+tr("</span>")+generatedate(message)+tr("<span style=\"font-size: 14px; \">")+message["message"]+tr("</span><br/><br/>"));
+}
+QString clients::generatemesage(QString message, QString psedo)
+{
+    if(psedo == "" ||psedo == " "){
+        psedo = "anonymous";
+    }
+    return(tr("<span style=\"font-size: 12px; font-weight: bold;\">")+psedo+tr("</span>")+generatedate()+tr("<span style=\"font-size: 14px; \">")+message+tr("</span><br/><br/>"));
 }
