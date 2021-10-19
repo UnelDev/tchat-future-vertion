@@ -6,13 +6,13 @@
 #include <QDateTime>
 #include <QSettings>
 #include <QNetworkInterface>
+class clients;
 class clients : public QWidget
 {
     Q_OBJECT
 public:
-    clients();
+    clients(QWidget *parent = nullptr);
     ~clients();
-    void conect();
     void desconnect();
     void connectto(QString ip, int port);
     void connected();
@@ -31,6 +31,7 @@ public:
 
 
     //ilisible
+    void socketerror(QAbstractSocket::SocketError erreur);
 private:
     QSettings* settings;
     QTcpSocket *socket;

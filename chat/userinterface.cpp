@@ -1,19 +1,18 @@
 #include "userinterface.h"
 #include "ui_userinterface.h"
-
+#include "clients.h"
+clients *client;
 userinterface::userinterface(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::userinterface)
 {
     ui->setupUi(this);
     startTrayIcon();
-    client = new clients();
 }
-
 userinterface::~userinterface()
 {
     delete ui;
-    delete client;
+    //delete client;
     delete sticon;
 }
 void userinterface::startTrayIcon(){
@@ -31,11 +30,11 @@ void userinterface::startTrayIcon(){
     sticon->setIcon(icon); // On assigne une image à notre icône
     sticon->show(); // On affiche l'icône
     connect(actTexte1, SIGNAL(triggered()), qApp, SLOT(quit()));
-    connect(condense, SIGNAL(triggered()), this, SLOT(condesed()));
+    //connect(condense, SIGNAL(triggered()), this, SLOT(condesed()));
 }
 void userinterface::on_conectbuton_clicked()
 {
-    client->conect();
+    client->connectto(ui->serveurip->text(), ui->serveurport->value());
 }
 void userinterface::displayMessagelist(QString message){
     ui->messagelist->append(message);
@@ -71,4 +70,8 @@ int userinterface::valueOFServeurPort(){
     return ui->serveurport->value();
 }
 
+void userinterface::on_sentbuton_clicked()
+{
+
+}
 

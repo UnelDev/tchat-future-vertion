@@ -5,12 +5,10 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QMessageBox>
-#include "clients.h"
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class userinterface; }
 QT_END_NAMESPACE
-
+class userinterface;
 class userinterface : public QWidget
 {
     Q_OBJECT
@@ -30,8 +28,9 @@ public:
 private slots:
     void on_conectbuton_clicked();
 
+    void on_sentbuton_clicked();
+
 private:
-    clients *client;
     Ui::userinterface *ui;
     QMenu *stmenu;
     QSystemTrayIcon* sticon;

@@ -1,9 +1,10 @@
 #include "clients.h"
 #include "userinterface.h"
 userinterface *ui;
-clients::clients()
+clients::clients(QWidget *parent)
+    : QWidget(parent)
 {
-    settings = new QSettings("ananta system","tchat",this);
+    settings = new QSettings("ananta system","tchat",nullptr);
     if(!settings->contains("succes/succes")){
         settings->setValue("succes/succes",true);
     }if(!settings->contains("succes/nbmessage")){
@@ -36,13 +37,13 @@ clients::clients()
     version="5.0";
     nbuser=0;
     socket = new QTcpSocket; //serveur
-    connect(socket, &QTcpSocket::readyRead, this ,&clients::datareceived);
-    connect(socket, &QTcpSocket::connected,this,&clients::connected);
-    connect(socket, &QTcpSocket::disconnected,this,&clients::desconnect);
-    connect(socket, &QTcpSocket::errorOccurred, this, &clients::socketerror);
+    //connect(socket, &QTcpSocket::readyRead, this ,&clients::datareceived);
+    //connect(socket, &QTcpSocket::connected,this,&clients::connected);
+    //connect(socket, &QTcpSocket::disconnected,this,&clients::desconnect);
+    //connect(socket, &QTcpSocket::errorOccurred, this, &clients::socketerror);
     messagesize = 0;
     //conexion
-    connectto("127.0.0.1", ui->valueOFServeurPort());
+    //connectto("127.0.0.1", valueOFServeurPort());
 }
 clients::~clients(){
     delete socket;
@@ -73,13 +74,6 @@ void clients::datareceived()
 
 
 
-
-
-
-void clients::conect(){
-    ui->startTrayIcon();
-    QMessageBox::critical(nullptr,tr("psedo invalid"),tr("vous ne pouvez avoir anonymous ou aucun psedo"));
-}
 void clients::desconnect()
 {
     QString textmessage = generatemesage(tr("déconecter du serveur"),tr("chat bot"));
@@ -227,7 +221,7 @@ void clients::processthemessage(QMap<QString,QString> message)
     }else if(message["type"]=="msg"){
         ui->displayMessagelist(generatemesage(message));
     }else if(message["type"]=="connection"){
-        ui->addItemOfClientList(message["psedo"]);
+       ui->addItemOfClientList(message["psedo"]);
         ++nbuser;
         if(nbuser==10){
             settings->setValue("succes/10userSimultaneously", true);
@@ -302,7 +296,7 @@ void clients::socketerror(QAbstractSocket::SocketError erreur)
 
         case QAbstractSocket::SocketAccessError:
             ui->displayMessagelist(generatemesage(QObject::tr("L'opération a échoué car l'application ne dispose pas des privilèges requis."),tr("chat bot")));
-           ui->changestateconnectbuton(true);
+            ui->changestateconnectbuton(true);
         break;
         case QAbstractSocket::SocketResourceError:
             ui->displayMessagelist(generatemesage(QObject::tr("Le système local a manqué de ressources (par exemple, trop de sockets)."),tr("chat bot")));
@@ -311,7 +305,7 @@ void clients::socketerror(QAbstractSocket::SocketError erreur)
 
         case QAbstractSocket::SocketTimeoutError:
             ui->displayMessagelist(generatemesage(QObject::tr("loperation a expirée"),tr("chat bot")));
-            ui->changestateconnectbuton(true);
+           ui->changestateconnectbuton(true);
         break;
 
         case QAbstractSocket::DatagramTooLargeError:
@@ -345,7 +339,7 @@ void clients::socketerror(QAbstractSocket::SocketError erreur)
 
         case QAbstractSocket::ProxyConnectionTimeoutError:
             ui->displayMessagelist(generatemesage(QObject::tr("La connexion au serveur proxy a expiré ou le serveur proxy a cessé de répondre lors de la phase d'authentification."),tr("chat bot")));
-            ui->changestateconnectbuton(true);
+           ui->changestateconnectbuton(true);
         break;
 
         case QAbstractSocket::ProxyNotFoundError:
@@ -354,8 +348,8 @@ void clients::socketerror(QAbstractSocket::SocketError erreur)
         break;
 
         case QAbstractSocket::ProxyProtocolError:
-            displayMessagelist(generatemesage(QObject::tr("La négociation de connexion avec le serveur proxy a échoué, car la réponse du serveur proxy n'a pas pu être comprise."),tr("chat bot")));
-            changestateconnectbuton(true);
+            ui->displayMessagelist(generatemesage(QObject::tr("La négociation de connexion avec le serveur proxy a échoué, car la réponse du serveur proxy n'a pas pu être comprise."),tr("chat bot")));
+            ui->changestateconnectbuton(true);
         break;
 
         case QAbstractSocket::OperationError:
