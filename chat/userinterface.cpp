@@ -1,7 +1,5 @@
 #include "userinterface.h"
 #include "ui_userinterface.h"
-#include "clients.h"
-clients *client;
 userinterface::userinterface(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::userinterface)

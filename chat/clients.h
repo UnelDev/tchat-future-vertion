@@ -6,7 +6,6 @@
 #include <QDateTime>
 #include <QSettings>
 #include <QNetworkInterface>
-class clients;
 class clients : public QWidget
 {
     Q_OBJECT
