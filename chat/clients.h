@@ -6,10 +6,14 @@
 #include <QDateTime>
 #include <QSettings>
 #include <QNetworkInterface>
+#include "userinterface.h"
+class userinterface;
 class clients : public QWidget
 {
     Q_OBJECT
 public:
+        void setB(userinterface* ptr) { m_ptrToUserinterface = ptr;}
+        void fonctionQuiFaitAppelleAUserinterface();
     clients(QWidget *parent = nullptr);
     ~clients();
     void desconnect();
@@ -32,6 +36,7 @@ public:
     //ilisible
     void socketerror(QAbstractSocket::SocketError erreur);
 private:
+    userinterface* m_ptrToUserinterface = nullptr;
     QSettings* settings;
     QTcpSocket *socket;
     quint16 messagesize;

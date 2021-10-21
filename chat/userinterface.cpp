@@ -13,6 +13,9 @@ userinterface::~userinterface()
     //delete client;
     delete sticon;
 }
+void userinterface::fonctionQuiFaitAppelleAClients(){
+    m_ptrToClients->fonctionQuiFaitAppelleAUserinterface();
+}
 void userinterface::startTrayIcon(){
     sticon = new QSystemTrayIcon(this); // on construit notre icône de notification
     // Création du menu contextuel de notre icône
@@ -32,7 +35,8 @@ void userinterface::startTrayIcon(){
 }
 void userinterface::on_conectbuton_clicked()
 {
-    client->connectto(ui->serveurip->text(), ui->serveurport->value());
+    m_ptrToClients->fonctionQuiFaitAppelleAUserinterface();
+    //client->connectto(ui->serveurip->text(), ui->serveurport->value());
 }
 void userinterface::displayMessagelist(QString message){
     ui->messagelist->append(message);

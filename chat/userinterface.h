@@ -5,15 +5,18 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QMessageBox>
+#include "clients.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class userinterface; }
 QT_END_NAMESPACE
-class userinterface;
+class clients;
 class userinterface : public QWidget
 {
     Q_OBJECT
 
 public:
+    void setA(clients* ptr) { m_ptrToClients = ptr;}
+    void fonctionQuiFaitAppelleAClients();
     userinterface(QWidget *parent = nullptr);
     ~userinterface();
     void startTrayIcon();
@@ -31,6 +34,7 @@ private slots:
     void on_sentbuton_clicked();
 
 private:
+    clients* m_ptrToClients = nullptr;
     Ui::userinterface *ui;
     QMenu *stmenu;
     QSystemTrayIcon* sticon;
